@@ -39,6 +39,21 @@ Resources:
               Path: /flow/decode-zip/xlsx
               Method: GET
 
+  EncodeFLowToXLSXZipFunction:
+      Type: AWS::Serverless::Function
+      Properties:
+        Description: Attempts to create a Workspace in the database, fails if it already exists.
+        CodeUri: bin/
+        Handler: encode_flow_zip_xlsx
+        Runtime: go1.x
+        Tracing: Active
+        Events:
+          CatchAll:
+            Type: Api
+            Properties:
+              Path: /flow/encode/xlsx
+              Method: GET
+
 Outputs:
   HelloWorldAPI:
     Description: "API Gateway endpoint URL for Prod environment for First Function"

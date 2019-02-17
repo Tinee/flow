@@ -44,15 +44,4 @@ func main() {
 	s := flow.NewService(zipper, decoder)
 	lambdaFunction := decodeZIPFunction{s}
 	lambda.Start(lambdaFunction.handler)
-
-	// flow, err := s.DecodeZipFile(f, "biscuit")
-	// if err != nil {
-	// 	log.Fatalln(err)
-	// }
-
-	// r, err := s.EncodeFlowToZip(flow, "walla.xlsx", "Testar")
-	// if err != nil {
-	// 	log.Fatalln(err)
-	// }
-	// io.Copy(f2, r)
 }
