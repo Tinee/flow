@@ -2,13 +2,9 @@ package xlsx
 
 import (
 	"bytes"
-	"crypto/rand"
-	"encoding/hex"
 	"io"
 	"io/ioutil"
 	"lumo"
-	"os"
-	"path/filepath"
 
 	"github.com/tealeg/xlsx"
 )
@@ -72,10 +68,4 @@ func (x *XLSX) Encode(flows lumo.Flows, name string) (io.Reader, error) {
 	}
 	f.Write(&buf)
 	return &buf, nil
-}
-
-func generateTempFileName() string {
-	randBytes := make([]byte, 16)
-	rand.Read(randBytes)
-	return filepath.Join(os.TempDir(), hex.EncodeToString(randBytes)) + ".xlsx"
 }

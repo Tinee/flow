@@ -1,0 +1,45 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  lumo
+  
+  Sample SAM Template for lumo
+
+Globals:
+  Api:
+    BinaryMediaTypes:
+      - application~1octet-stream
+  Function:
+    Timeout: 15
+    Runtime: go1.x
+    Tracing: Active
+    MemorySize: 128
+    Tags:
+      AppName: !Ref ProjectName
+
+
+Parameters:
+  ProjectName:
+    Type: String
+    Description: Please the name of the project.
+
+Resources:
+  DecodeZipFlowXLSXfunction:
+      Type: AWS::Serverless::Function
+      Properties:
+        Description: Attempts to create a Workspace in the database, fails if it already exists.
+        CodeUri: bin/
+        Handler: decode_zip_xlsx_flow
+        Runtime: go1.x
+        Tracing: Active
+        Events:
+          CatchAll:
+            Type: Api
+            Properties:
+              Path: /flow/decode-zip/xlsx
+              Method: GET
+
+Outputs:
+  HelloWorldAPI:
+    Description: "API Gateway endpoint URL for Prod environment for First Function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
