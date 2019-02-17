@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"crypto/rand"
 	"encoding/hex"
-	"flow"
 	"io"
 	"io/ioutil"
+	"lumo"
 	"os"
 	"path/filepath"
 
@@ -22,9 +22,9 @@ func New() *XLSX {
 }
 
 // Decode takes a src reader and attempts to make it into a domain Flow.
-func (x *XLSX) Decode(r io.Reader) (flow.Flows, error) {
+func (x *XLSX) Decode(r io.Reader) (lumo.Flows, error) {
 	var (
-		result = flow.Flows{}
+		result = lumo.Flows{}
 		bs, _  = ioutil.ReadAll(r)
 		buf    = bytes.NewReader(bs)
 	)
@@ -38,7 +38,7 @@ func (x *XLSX) Decode(r io.Reader) (flow.Flows, error) {
 			if len(row.Cells) == 0 {
 				continue
 			}
-			currentFlow := flow.Flow{Type: row.Cells[0].String()}
+			currentFlow := lumo.Flow{Type: row.Cells[0].String()}
 
 			for _, cell := range row.Cells {
 				currentFlow.Fields = append(currentFlow.Fields, cell.String())
@@ -55,11 +55,10 @@ func (x *XLSX) Decode(r io.Reader) (flow.Flows, error) {
 // { Type:"SAR",Fields:["SAR","Something"]},
 // { Type:"SAR",Fields:["SAR","Something"]}
 //] -> xlsx file with a sheet and two rows, one for each element in flows.
-func (x *XLSX) Encode(flows flow.Flows, name string) (io.Reader, error) {
+func (x *XLSX) Encode(flows lumo.Flows, name string) (io.Reader, error) {
 	var (
 		f   = xlsx.NewFile()
 		buf = bytes.Buffer{}
-		// tempName = generateTempFileName()
 	)
 	s, err := f.AddSheet(name)
 	if err != nil {
@@ -71,17 +70,6 @@ func (x *XLSX) Encode(flows flow.Flows, name string) (io.Reader, error) {
 			row.AddCell().SetValue(field)
 		}
 	}
-
-	// err = f.Save("asd.xlsx")
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// tempFile, err := os.OpenFile(tempName, os.O_RDWR, os.ModePerm)
-	// defer os.Remove(tempFile.Name())
-	// if err != nil {
-	// 	return nil, err
-	// }
 	f.Write(&buf)
 	return &buf, nil
 }

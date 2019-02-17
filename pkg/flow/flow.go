@@ -1,22 +1,23 @@
 package flow
 
 import (
-	"flow"
 	"io"
+	"lumo"
 )
 
 // Service is the usecase when we want to work within the domains flows.
 type Service struct {
-	zip     flow.Zipper
-	decoder flow.Decoder
+	zip     lumo.Zipper
+	decoder lumo.Decoder
 }
 
 // NewService creates a new service.
-func NewService(z flow.Zipper, d flow.Decoder) *Service {
+func NewService(z lumo.Zipper, d lumo.Decoder) *Service {
 	return &Service{z, d}
 }
 
-func (s *Service) DecodeZipFile(r io.Reader, password string) (flow.Flows, error) {
+// DecodeZipFile takes a reader to a zipfile and then attempts to decrypt it with the given password.
+func (s *Service) DecodeZipFile(r io.Reader, password string) (lumo.Flows, error) {
 	r, err := s.zip.Unlock(r, password)
 	if err != nil {
 		return nil, err
@@ -29,7 +30,8 @@ func (s *Service) DecodeZipFile(r io.Reader, password string) (flow.Flows, error
 	return f, nil
 }
 
-func (s *Service) EncodeFlowToZip(f flow.Flows, name, password string) (io.Reader, error) {
+// EncodeFlowToZip takes flows and encrypts it into a zip file that contains an encrypted file from the decoder.
+func (s *Service) EncodeFlowToZip(f lumo.Flows, name, password string) (io.Reader, error) {
 	r, err := s.decoder.Encode(f, name)
 	if err != nil {
 		return nil, err
