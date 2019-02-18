@@ -2,6 +2,7 @@ package xlsx
 
 import (
 	"bytes"
+	"errors"
 	"io"
 	"io/ioutil"
 	"lumo"
@@ -56,6 +57,10 @@ func (x *XLSX) Encode(flows lumo.Flows, name string) (io.Reader, error) {
 		f   = xlsx.NewFile()
 		buf = bytes.Buffer{}
 	)
+	if name == "" {
+		return nil, errors.New("invalid argument")
+	}
+
 	s, err := f.AddSheet(name)
 	if err != nil {
 		return nil, err

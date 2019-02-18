@@ -19,7 +19,7 @@ func New() *Zip {
 }
 
 // WithPassword takes a source reader, name and password
-func (z *Zip) WithPassword(r io.Reader, fileName, password string) (*bytes.Reader, error) {
+func (z *Zip) WithPassword(r io.Reader, fileName, password string) (io.Reader, error) {
 	var (
 		buf  = bytes.Buffer{}
 		zipw = zip.NewWriter(&buf)
@@ -35,11 +35,11 @@ func (z *Zip) WithPassword(r io.Reader, fileName, password string) (*bytes.Reade
 	}
 	io.Copy(wr, r)
 	zipw.Close()
-	return bytes.NewReader(buf.Bytes()), nil
+	return &buf, nil
 }
 
 // Unlock takes a src reader and a password, it then gives back a byte reader with all those files.
-func (z *Zip) Unlock(r io.Reader, password string) (*bytes.Reader, error) {
+func (z *Zip) Unlock(r io.Reader, password string) (io.Reader, error) {
 	var (
 		result = bytes.Buffer{}
 		bs, _  = ioutil.ReadAll(r)
@@ -58,6 +58,7 @@ func (z *Zip) Unlock(r io.Reader, password string) (*bytes.Reader, error) {
 		if err != nil {
 			return nil, err
 		}
+
 		defer frd.Close()
 
 		_, err = io.Copy(&result, frd)
@@ -66,5 +67,5 @@ func (z *Zip) Unlock(r io.Reader, password string) (*bytes.Reader, error) {
 		}
 	}
 
-	return bytes.NewReader(result.Bytes()), nil
+	return &result, nil
 }
